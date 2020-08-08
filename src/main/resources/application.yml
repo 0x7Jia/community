@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3376/community?serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  thymeleaf:
+    prefix: classpath:/templates/
+    cache: false
+  devtools:
+    livereload:
+      enabled: true
+
+mybatis:
+  mapper-locations: mappers/*.xml
+  type-aliases-package: me.echo.community.entity
+  configuration:
+    aggressive-lazy-loading: false
+
+logging:
+  level:
+    me.echo.community: debug
