@@ -1,3 +1,7 @@
+server:
+  servlet:
+    context-path: /community
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -10,13 +14,25 @@ spring:
   devtools:
     livereload:
       enabled: true
+  mail:
+    host: smtp.126.com
+    port: 465
+    username: yourEmail@email.com
+    password: yourPassword
+    protocol: smtps
+    properties: {"mail.smtp.ssl.enable", true}
 
 mybatis:
   mapper-locations: mappers/*.xml
   type-aliases-package: me.echo.community.entity
   configuration:
     aggressive-lazy-loading: false
+    use-generated-keys: true
 
 logging:
   level:
     me.echo.community: debug
+
+community:
+  path:
+    domain: http://localhost:8080

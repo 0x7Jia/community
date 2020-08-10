@@ -10,12 +10,12 @@
 <body>	
 	<div class="nk-container">
 		<!-- 头部 -->
-		<header class="bg-custom sticky-top">
+		<header class="bg-custom sticky-top" th:fragment="header">
 			<div class="container">
 				<!-- 导航 -->
 				<nav class="navbar navbar-expand-lg navbar-dark">
 					<!-- logo -->
-					<a class="navbar-brand" href="/index">Echo Community</a>
+					<a class="navbar-brand" th:href="@{/index}">Echo Community</a>
 					<!-- 功能 -->
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 						<ul class="navbar-nav mr-auto">
@@ -26,10 +26,10 @@
 								<a class="nav-link position-relative" href="site/letter.html">消息<span class="badge badge-danger">12</span></a>
 							</li>
 							<li class="nav-item ml-3 btn-group-vertical">
-								<a class="nav-link" href="site/register.html">注册</a>
+								<a class="nav-link" th:href="@{/register}">注册</a>
 							</li>
 							<li class="nav-item ml-3 btn-group-vertical">
-								<a class="nav-link" href="site/login.html">登录</a>
+								<a class="nav-link" th:href="@{/login}">登录</a>
 							</li>
 						</ul>
 						<!-- 搜索 -->
@@ -40,14 +40,14 @@
 						<ul class="navbar-nav ml-0">
 							<li class="nav-item ml-3 btn-group-vertical dropdown">
 								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									<img src="/img/default.jpg" class="rounded-circle" style="width:30px;"/>
+									<img th:src="@{/img/default.jpg}" class="rounded-circle" style="width:30px;"/>
 								</a>
 								<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 									<a class="dropdown-item text-center" href="site/profile.html">个人主页</a>
 									<a class="dropdown-item text-center" href="site/setting.html">账号设置</a>
 									<a class="dropdown-item text-center" href="site/login.html">退出登录</a>
 									<div class="dropdown-divider"></div>
-									<span class="dropdown-item text-center text-secondary">nowcoder</span>
+									<span class="dropdown-item text-center text-secondary">anonymous</span>
 								</div>
 							</li>
 						</ul>

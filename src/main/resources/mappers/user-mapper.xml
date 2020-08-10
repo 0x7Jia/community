@@ -19,8 +19,22 @@
     </sql>
 
     <select id="selectUserById" resultMap="userResultMap" parameterType="int">
-        select <include refid="selectFields"/>
+        select
+        <include refid="selectFields"/>
         from user
         where id=#{id}
     </select>
+
+    <insert id="saveUser" parameterType="user">
+        <selectKey keyProperty="id" keyColumn="id" resultType="int" order="AFTER">
+            select last_insert_id();
+        </selectKey>
+        insert into user(id, username, password, salt, email, type, status, activation_code, header_url, create_time)
+        values (null, #{userName}, #{password}, #{salt}, #{email}, #{type},
+        #{status}, #{activationCode}, #{headerUrl}, #{createTime})
+    </insert>
+
+    <update id="updateStatus">
+        update user set status = #{status} where id=#{userId}
+    </update>
 </mapper>

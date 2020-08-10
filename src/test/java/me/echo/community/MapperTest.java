@@ -5,6 +5,7 @@ import me.echo.community.dao.UserMapper;
 import me.echo.community.entity.DiscussPost;
 import me.echo.community.entity.DiscussPostWithUser;
 import me.echo.community.entity.User;
+import me.echo.community.enums.UserType;
 import me.echo.community.service.DiscussPostService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,18 +46,21 @@ public class MapperTest {
     }
 
     @Test
-    public void testSelectUserById(){
-        List<User> users = userMapper.selectUserById(115);
-        for (User user:users){
-            System.out.println(user);
-        }
+    public void testSelectUserById() {
+        User users = userMapper.selectUserById(115);
+        System.out.println(users);
     }
 
     @Test
-    public void testSelectDiscussPostWithUser(){
+    public void testSelectDiscussPostWithUser() {
         List<DiscussPostWithUser> discussPostWithUsers = discussPostMapper.selectDiscussPostWithUser(101, 1, 4);
         for (DiscussPostWithUser discussPostWithUser : discussPostWithUsers) {
             System.out.println(discussPostWithUser);
         }
+    }
+
+    @Test
+    public void testEnum() {
+        System.out.println(UserType.SUPERUSER.getKey());
     }
 }
