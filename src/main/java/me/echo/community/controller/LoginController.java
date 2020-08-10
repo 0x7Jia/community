@@ -1,9 +1,12 @@
 package me.echo.community.controller;
 
 
+import com.google.code.kaptcha.Producer;
 import me.echo.community.entity.User;
 import me.echo.community.service.UserService;
 import me.echo.community.util.CommunityConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,13 +14,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 @Controller
 public class LoginController implements CommunityConstant {
 
+    private final Logger logger = LoggerFactory.getLogger(LoginController.class);
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private Producer kaptchaProducer;
 
     @GetMapping("/login")
     public String getLoginPage() {
@@ -62,5 +76,24 @@ public class LoginController implements CommunityConstant {
             model.addAttribute("target", "/index");
         }
         return "/site/operate-result";
+    }
+
+    @GetMapping("/kaptcha")
+    public void getKaptcha(HttpServletResponse response, HttpSession session){
+        String text = kaptchaProducer.createText();
+        BufferedImage image = kaptchaProducer.createImage(text);
+
+        // 保存验证码文字到session
+        session.setAttribute("kaptcha", text);
+
+        // 返回验证码图片
+        response.setContentType("image/png");
+        try{
+            OutputStream outputStream = response.getOutputStream();
+            ImageIO.write(image, "png", outputStream);
+        }catch (IOException e){
+            // ignore
+            logger.error("验证码相应失败:"+e.getMessage());
+        }
     }
 }
