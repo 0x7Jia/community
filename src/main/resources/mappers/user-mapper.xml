@@ -25,6 +25,13 @@
         where id=#{id}
     </select>
 
+    <select id="selectUserByUserName" resultMap="userResultMap" parameterType="string">
+        select
+        <include refid="selectFields"/>
+        from user
+        where username=#{userName}
+    </select>
+
     <insert id="saveUser" parameterType="user">
         <selectKey keyProperty="id" keyColumn="id" resultType="int" order="AFTER">
             select last_insert_id();

@@ -42,4 +42,10 @@ public class UserTest {
     public void testUpdateStatus(){
         userMapper.updateStatus(158, UserStatus.ACTIVATED.getKey());
     }
+
+    @Test
+    public void testSelectUserByUserName(){
+        User user = userMapper.selectUserByUserName("echo");
+        System.out.println(user);
+    }
 }

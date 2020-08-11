@@ -9,6 +9,11 @@ public interface UserMapper {
     User selectUserById(Integer id);
 
     /**
+     * 根据用户名查询用户
+     */
+    User selectUserByUserName(String userName);
+
+    /**
      * 保存用户，操作会将自动生成的id保存到 User 对象中
      */
     int saveUser(User user);
