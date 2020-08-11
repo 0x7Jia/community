@@ -41,6 +41,15 @@ public class UserService implements CommunityConstant {
     @Autowired(required = false)
     private LoginTicketMapper loginTicketMapper;
 
+    /**
+     * 根据用户id查询用户信息
+     * @param userId id主键值
+     * @return User 对象
+     */
+    public User findUserById(Integer userId){
+        return userMapper.selectUserById(userId);
+    }
+
     public Map<String, Object> register(User user) {
         Map<String, Object> map = new HashMap<>();
         if (user == null) {
@@ -151,5 +160,12 @@ public class UserService implements CommunityConstant {
 
     public void logout(String ticket){
         loginTicketMapper.updateStatus(ticket, 1);
+    }
+
+    /**
+     * 获取登录凭证
+     */
+    public LoginTicket findLoginTicket(String ticket){
+        return loginTicketMapper.selectLoginTicket(ticket);
     }
 }
