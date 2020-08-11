@@ -17,8 +17,8 @@ spring:
   mail:
     host: smtp.126.com
     port: 465
-    username: vip5227@126.com
-    password: love1314++
+    username: your@email.com
+    password: yourpassword
     protocol: smtps
     properties: {"mail.smtp.ssl.enable", true}
 
@@ -36,3 +36,4 @@ logging:
 community:
   path:
     domain: http://localhost:8080
+    upload: D:\\appLogs\\upload

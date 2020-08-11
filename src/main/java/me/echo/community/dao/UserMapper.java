@@ -23,4 +23,13 @@ public interface UserMapper {
      */
     void updateStatus(Integer userId, Integer status);
 
+    /**
+     * 更新用户头像
+     */
+    int updateHeader(Integer userId, String headerUrl);
+
+    /**
+     * 更新用户密码
+     */
+    void updatePassword(Integer userId, String password);
 }
