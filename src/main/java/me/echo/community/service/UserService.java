@@ -153,7 +153,15 @@ public class UserService implements CommunityConstant {
         loginTicket.setStatus(0);
         loginTicket.setExpired(new Date(System.currentTimeMillis()+expireSeconds*1000));
 
-        loginTicketMapper.insertLoginTicket(loginTicket);
+        /*
+         * 数据库中有该用户的数据则更新记录 否则新建记录
+         */
+        if (loginTicketMapper.selectLoginTicketById(user.getId())==null){
+            // 不存在该用户以前的登录记录
+            loginTicketMapper.insertLoginTicket(loginTicket);
+        }else {
+            loginTicketMapper.updateLoginTicket(loginTicket);
+        }
         map.put("ticket", loginTicket.getTicket());
         return map;
     }

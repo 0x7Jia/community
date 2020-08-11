@@ -7,5 +7,9 @@ public interface LoginTicketMapper {
 
     LoginTicket selectLoginTicket(String ticket);
 
+    LoginTicket selectLoginTicketById(Integer id);
+
     int updateStatus(String ticket, Integer status);
+
+    int updateLoginTicket(LoginTicket loginTicket);
 }

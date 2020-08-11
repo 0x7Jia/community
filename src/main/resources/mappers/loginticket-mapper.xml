@@ -21,10 +21,21 @@
         values (#{userId}, #{ticket}, #{status}, #{expired})
     </insert>
 
+    <update id="updateLoginTicket" parameterType="loginTicket">
+        update login_ticket set ticket=#{ticket}, status=#{status}, expired=#{expired}
+        where user_id=#{userId}
+    </update>
+
     <select id="selectLoginTicket" parameterType="String" resultMap="LoginTicketResultMap">
         select <include refid="selectFields"/>
         from login_ticket
         where ticket=#{ticket}
+    </select>
+
+    <select id="selectLoginTicketById" parameterType="int" resultMap="LoginTicketResultMap">
+        select <include refid="selectFields"/>
+        from login_ticket
+        where user_id=#{id}
     </select>
 
     <update id="updateStatus">

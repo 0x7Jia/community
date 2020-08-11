@@ -40,4 +40,10 @@ public class LoginTicketTest {
     public void testUpdateStatus(){
         loginTicketMapper.updateStatus("123sdsf", 0);
     }
+
+    @Test
+    public void testSelectLoginTicketById(){
+        LoginTicket loginTicket = loginTicketMapper.selectLoginTicketById(111);
+        System.out.println(loginTicket==null);
+    }
 }
