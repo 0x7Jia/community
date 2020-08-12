@@ -1,5 +1,6 @@
 package me.echo.community.config;
 
+import me.echo.community.controller.interceptor.LoginRequiredInterceptor;
 import me.echo.community.controller.interceptor.LoginTicketInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,12 +12,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class MyMvcConfig implements WebMvcConfigurer{
 
+    private final LoginTicketInterceptor loginTicketInterceptor;
+
+    private final LoginRequiredInterceptor loginRequiredInterceptor;
+
     @Autowired
-    private LoginTicketInterceptor loginTicketInterceptor;
+    public MyMvcConfig(LoginTicketInterceptor loginTicketInterceptor, LoginRequiredInterceptor loginRequiredInterceptor) {
+        this.loginTicketInterceptor = loginTicketInterceptor;
+        this.loginRequiredInterceptor = loginRequiredInterceptor;
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginTicketInterceptor)
+        registry.addInterceptor(this.loginTicketInterceptor)
+                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+
+        registry.addInterceptor(this.loginRequiredInterceptor)
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
     }
 

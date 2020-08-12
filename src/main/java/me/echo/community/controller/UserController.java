@@ -1,5 +1,6 @@
 package me.echo.community.controller;
 
+import me.echo.community.annotation.LoginRequired;
 import me.echo.community.entity.User;
 import me.echo.community.service.UserService;
 import me.echo.community.util.CommunityUtil;
@@ -48,6 +49,7 @@ public class UserController {
      * 获取用户设置页面
      */
     @GetMapping("/setting")
+    @LoginRequired
     public String getSettingPage(){
         return "/site/setting";
     }
@@ -57,6 +59,7 @@ public class UserController {
      * @param headerImage 浏览器传递的头像
      */
     @PostMapping("/upload")
+    @LoginRequired
     public String uploadHeader(MultipartFile headerImage, Model model){
         if (headerImage==null){
             model.addAttribute("uploadError", "您还没有选择图片!");
@@ -90,7 +93,7 @@ public class UserController {
     }
 
     /**
-     * 返回计算机上存储的用户头像给客户端
+     * 返回用户头像给客户端
      * @param fileName 浏览器传递的头像名称
      * @param response 以流的方式向客户端传输二进制数据
      */
@@ -116,6 +119,7 @@ public class UserController {
      * 用户修改密码
      */
     @PostMapping("/updatePassword")
+    @LoginRequired
     public String updatePassword(String oldPassword, String newPassword, String confirmationPassword, Model model){
         if (StringUtils.isBlank(oldPassword)){
             model.addAttribute("oldPasswordError", "原始密码不能为空!");
