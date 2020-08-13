@@ -23,4 +23,10 @@ public interface DiscussPostMapper {
     List<DiscussPostWithUser> selectDiscussPostWithUser(Integer userId, int offset, int limit);
 
     int insertDiscussPost(DiscussPost discussPost);
+
+    /**
+     * 根据id查询帖子详情
+     * @param id 帖子id
+     */
+    DiscussPost selectDiscussPostById(Integer id);
 }

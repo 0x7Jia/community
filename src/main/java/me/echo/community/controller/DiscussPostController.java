@@ -3,13 +3,13 @@ package me.echo.community.controller;
 import me.echo.community.entity.DiscussPost;
 import me.echo.community.entity.User;
 import me.echo.community.service.DiscussPostService;
+import me.echo.community.service.UserService;
 import me.echo.community.util.CommunityUtil;
 import me.echo.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -22,6 +22,9 @@ public class DiscussPostController {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/add")
     @ResponseBody
@@ -43,5 +46,18 @@ public class DiscussPostController {
 
         discussPostService.addDiscussPost(post);
         return CommunityUtil.getJSONString(0, "发布成功!");
+    }
+
+    @GetMapping("/detail/{postId}")
+    public String getPostDetail(@PathVariable("postId") Integer postId, Model model){
+        if (postId < 0){
+            return "/index";
+        }
+
+        DiscussPost post = discussPostService.findDiscussPostById(postId);
+        model.addAttribute("post", post);
+        User user = userService.findUserById(Integer.parseInt(post.getUserId()));
+        model.addAttribute("user", user);
+        return "/site/discuss-detail";
     }
 }
