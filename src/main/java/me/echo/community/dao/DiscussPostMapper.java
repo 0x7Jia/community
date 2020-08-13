@@ -21,4 +21,6 @@ public interface DiscussPostMapper {
 
 
     List<DiscussPostWithUser> selectDiscussPostWithUser(Integer userId, int offset, int limit);
+
+    int insertDiscussPost(DiscussPost discussPost);
 }
