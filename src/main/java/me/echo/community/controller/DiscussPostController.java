@@ -1,9 +1,13 @@
 package me.echo.community.controller;
 
+import me.echo.community.entity.Comment;
 import me.echo.community.entity.DiscussPost;
+import me.echo.community.entity.Page;
 import me.echo.community.entity.User;
+import me.echo.community.service.CommentService;
 import me.echo.community.service.DiscussPostService;
 import me.echo.community.service.UserService;
+import me.echo.community.util.CommunityConstant;
 import me.echo.community.util.CommunityUtil;
 import me.echo.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.util.*;
 
 @Controller
 @RequestMapping("/discuss")
-public class DiscussPostController {
+public class DiscussPostController implements CommunityConstant {
 
     @Autowired
     private DiscussPostService discussPostService;
@@ -25,6 +29,9 @@ public class DiscussPostController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CommentService commentService;
 
     @PostMapping("/add")
     @ResponseBody
@@ -49,7 +56,7 @@ public class DiscussPostController {
     }
 
     @GetMapping("/detail/{postId}")
-    public String getPostDetail(@PathVariable("postId") Integer postId, Model model){
+    public String getPostDetail(@PathVariable("postId") Integer postId, Model model, Page page){
         if (postId < 0){
             return "/index";
         }
@@ -58,6 +65,49 @@ public class DiscussPostController {
         model.addAttribute("post", post);
         User user = userService.findUserById(Integer.parseInt(post.getUserId()));
         model.addAttribute("user", user);
+
+        // 查询评论
+        page.setLimit(10);
+        page.setPath("/discuss/detail/"+postId);
+        page.setRows(post.getCommentCount());
+
+        // 给帖子的评论
+        List<Comment> commentList = commentService.findCommentByEntity(ENTITY_TYPE_POST, post.getId(),
+                page.getOffset(), page.getLimit());
+        // 评论VO列表
+        List<Map<String, Object>> commentVoList = new ArrayList<>();
+        if (commentList!=null){
+            for (Comment comment:commentList){
+                Map<String, Object> commentVo = new HashMap<>();
+                commentVo.put("comment",comment);
+                commentVo.put("user", userService.findUserById(comment.getUserId()));
+
+                // 回复列表
+                List<Comment> replyList = commentService.findCommentByEntity(ENTITY_TYPE_COMMENT, comment.getId(),
+                        0, Integer.MAX_VALUE);
+                // 回复VO列表
+                List<Map<String, Object>> replyVoList = new ArrayList<>();
+                if (replyList!=null){
+                    for (Comment reply:replyList){
+                        Map<String, Object> replyVo = new HashMap<>();
+                        // 回复
+                        replyVo.put("reply", reply);
+                        replyVo.put("user", userService.findUserById(reply.getUserId()));
+                        User target = reply.getTargetId() == 0?null:userService.findUserById(reply.getTargetId());
+                        replyVo.put("target", target);
+
+                        replyVoList.add(replyVo);
+                    }
+                }
+                commentVo.put("replys", replyVoList);
+                // 回复数量
+                int replyCount = commentService.findCommentCount(ENTITY_TYPE_COMMENT, comment.getId());
+                commentVo.put("replyCount", replyCount);
+
+                commentVoList.add(commentVo);
+            }
+        }
+        model.addAttribute("comments", commentVoList);
         return "/site/discuss-detail";
     }
 }
