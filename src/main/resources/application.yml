@@ -1,6 +1,7 @@
 server:
   servlet:
     context-path: /community
+  address: 0.0.0.0
 
 spring:
   datasource:

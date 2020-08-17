@@ -2,6 +2,7 @@ package me.echo.community.controller;
 
 import me.echo.community.annotation.LoginRequired;
 import me.echo.community.entity.User;
+import me.echo.community.service.LikeService;
 import me.echo.community.service.UserService;
 import me.echo.community.util.CommunityUtil;
 import me.echo.community.util.HostHolder;
@@ -36,8 +37,11 @@ public class UserController {
     @Autowired
     private HostHolder hostHolder;
 
-  @Value("${server.servlet.context-path}")
-  private String contextPath;
+    @Autowired
+    private LikeService likeService;
+
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
 
     @Value("${community.path.domain}")
     private String domain;
@@ -149,5 +153,19 @@ public class UserController {
             model.addAttribute("oldPasswordError", "您输入的原始密码错误!");
             return "/site/setting";
         }
+    }
+
+    // 获取个人主页
+    @GetMapping("/profile/{userId}")
+    public String getProfilePage(@PathVariable("userId") Integer userId, Model model){
+        User user = userService.findUserById(userId);
+        if (user == null){
+            throw new RuntimeException("用户不存在");
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("likeCount", likeService.findUserLikeCount(userId));
+
+        return "/site/profile";
     }
 }
