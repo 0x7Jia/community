@@ -20,6 +20,7 @@ import org.thymeleaf.context.Context;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserService implements CommunityConstant {
@@ -51,7 +52,12 @@ public class UserService implements CommunityConstant {
      * @return User 对象
      */
     public User findUserById(Integer userId){
-        return userMapper.selectUserById(userId);
+//        return userMapper.selectUserById(userId);
+        User user = getCache(userId);
+        if (user == null){
+            user = initCache(userId);
+        }
+        return user;
     }
 
     public Map<String, Object> register(User user) {
@@ -106,6 +112,7 @@ public class UserService implements CommunityConstant {
             return ACTIVATION_REPEAT;
         }else if (user.getActivationCode().equals(code)){
             userMapper.updateStatus(userId, UserStatus.ACTIVATED.getKey());
+            cleanCache(userId);
             return ACTIVATION_SUCCESS;
         }else {
             return ACTIVATION_FAILURE;
@@ -197,14 +204,38 @@ public class UserService implements CommunityConstant {
      * @return 数据库影响的条数
      */
     public int updateHeaderUrl(Integer userId, String headerUrl){
-        return userMapper.updateHeader(userId, headerUrl);
+//        return userMapper.updateHeader(userId, headerUrl);
+        int rows = userMapper.updateHeader(userId, headerUrl);
+        cleanCache(userId);
+        return rows;
     }
 
     public void updatePassword(Integer userId, String password){
+        cleanCache(userId);
         userMapper.updatePassword(userId, password);
     }
 
     public User findUserByName(String username){
         return userMapper.selectUserByUserName(username);
+    }
+
+    // 尝试从缓存中取值
+    private User getCache(Integer userId){
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        return (User) redisTemplate.opsForValue().get(redisKey);
+    }
+
+    // 缓存没有命中，从MySQL中查询并加入缓存
+    private User initCache(Integer userId){
+        User user = userMapper.selectUserById(userId);
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.opsForValue().set(redisKey, user, 3600, TimeUnit.SECONDS);
+        return user;
+    }
+
+    // 当用户数据变更时，直接清除缓存
+    private void cleanCache(Integer userId){
+        String redisKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.delete(redisKey);
     }
 }

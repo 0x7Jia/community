@@ -8,6 +8,7 @@ public class RedisKeyUtil {
     private static final String PREFIX_FOLLOWER = "follower";
     private static final String PREFIX_KAPTCHA = "kaptcha";
     private static final String PREFIX_TICKET = "ticket";
+    private static final String PREFIX_USER = "user";
 
     // 某个实体的赞 like:entity:entityType:entityId -> set(userId)
     public static String getEntityLikeKey(int entityType, int entityId){
@@ -37,5 +38,10 @@ public class RedisKeyUtil {
     // 登录的凭证 ticket:ticket
     public static String getTicketKey(String ticket){
         return PREFIX_TICKET+SPLIT+ticket;
+    }
+
+    // 用户
+    public static String getUserKey(int userId){
+        return PREFIX_USER+SPLIT+userId;
     }
 }
