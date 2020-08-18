@@ -2,6 +2,7 @@ package me.echo.community.dao;
 
 import me.echo.community.entity.LoginTicket;
 
+@Deprecated
 public interface LoginTicketMapper {
     int insertLoginTicket(LoginTicket loginTicket);
 

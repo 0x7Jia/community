@@ -1,6 +1,5 @@
 package me.echo.community.service;
 
-import me.echo.community.dao.LoginTicketMapper;
 import me.echo.community.dao.UserMapper;
 import me.echo.community.entity.LoginTicket;
 import me.echo.community.entity.User;
@@ -9,9 +8,11 @@ import me.echo.community.enums.UserType;
 import me.echo.community.util.CommunityConstant;
 import me.echo.community.util.CommunityUtil;
 import me.echo.community.util.MailClient;
+import me.echo.community.util.RedisKeyUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -29,6 +30,9 @@ public class UserService implements CommunityConstant {
     @Autowired
     private TemplateEngine templateEngine;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @Value("${community.path.domain}")
     private String domain;
 
@@ -38,8 +42,8 @@ public class UserService implements CommunityConstant {
     @Autowired(required = false)
     private UserMapper userMapper;
 
-    @Autowired(required = false)
-    private LoginTicketMapper loginTicketMapper;
+//    @Autowired(required = false)
+//    private LoginTicketMapper loginTicketMapper;
 
     /**
      * 根据用户id查询用户信息
@@ -156,25 +160,34 @@ public class UserService implements CommunityConstant {
         /*
          * 数据库中有该用户的数据则更新记录 否则新建记录
          */
-        if (loginTicketMapper.selectLoginTicketById(user.getId())==null){
-            // 不存在该用户以前的登录记录
-            loginTicketMapper.insertLoginTicket(loginTicket);
-        }else {
-            loginTicketMapper.updateLoginTicket(loginTicket);
-        }
+//        if (loginTicketMapper.selectLoginTicketById(user.getId())==null){
+//            // 不存在该用户以前的登录记录
+//            loginTicketMapper.insertLoginTicket(loginTicket);
+//        }else {
+//            loginTicketMapper.updateLoginTicket(loginTicket);
+//        }
+        String redisKey = RedisKeyUtil.getTicketKey(loginTicket.getTicket());
+        redisTemplate.opsForValue().set(redisKey, loginTicket);
+
         map.put("ticket", loginTicket.getTicket());
         return map;
     }
 
     public void logout(String ticket){
-        loginTicketMapper.updateStatus(ticket, 1);
+//        loginTicketMapper.updateStatus(ticket, 1);
+        String redisKey = RedisKeyUtil.getTicketKey(ticket);
+        LoginTicket loginTicket = (LoginTicket) redisTemplate.opsForValue().get(redisKey);
+        loginTicket.setStatus(1);
+        redisTemplate.opsForValue().set(redisKey, loginTicket);
     }
 
     /**
      * 获取登录凭证
      */
     public LoginTicket findLoginTicket(String ticket){
-        return loginTicketMapper.selectLoginTicket(ticket);
+//        return loginTicketMapper.selectLoginTicket(ticket);
+        String redisKey = RedisKeyUtil.getTicketKey(ticket);
+        return (LoginTicket) redisTemplate.opsForValue().get(redisKey);
     }
 
     /**
