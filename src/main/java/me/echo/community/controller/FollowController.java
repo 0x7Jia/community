@@ -1,7 +1,9 @@
 package me.echo.community.controller;
 
+import me.echo.community.entity.Event;
 import me.echo.community.entity.Page;
 import me.echo.community.entity.User;
+import me.echo.community.event.EventProducer;
 import me.echo.community.service.FollowService;
 import me.echo.community.service.UserService;
 import me.echo.community.util.CommunityConstant;
@@ -30,6 +32,9 @@ public class FollowController implements CommunityConstant {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
 
     /**
      * 关注
@@ -42,6 +47,13 @@ public class FollowController implements CommunityConstant {
     public String follow(int entityType, int entityId){
         User user = hostHolder.getUser();
         followService.follow(user.getId(), entityType, entityId);
+        Event event = new Event()
+                .setTopic(TOPIC_FOLLOW)
+                .setEntityType(entityType)
+                .setEntityId(entityId)
+                .setEntityUserId(entityId)
+                .setUserId(user.getId());
+        eventProducer.fireEvent(event);
         return CommunityUtil.getJSONString(0, "正在关注");
     }
 

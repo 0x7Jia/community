@@ -1,7 +1,10 @@
 package me.echo.community.controller;
 
+import me.echo.community.entity.Event;
 import me.echo.community.entity.User;
+import me.echo.community.event.EventProducer;
 import me.echo.community.service.LikeService;
+import me.echo.community.util.CommunityConstant;
 import me.echo.community.util.CommunityUtil;
 import me.echo.community.util.HostHolder;
 import org.springframework.stereotype.Controller;
@@ -12,15 +15,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-public class LikeController {
+public class LikeController implements CommunityConstant {
 
     private final LikeService likeService;
 
     private final HostHolder hostHolder;
 
-    public LikeController(LikeService likeService, HostHolder hostHolder) {
+    private final EventProducer eventProducer;
+
+    public LikeController(LikeService likeService, HostHolder hostHolder, EventProducer eventProducer) {
         this.likeService = likeService;
         this.hostHolder = hostHolder;
+        this.eventProducer = eventProducer;
     }
 
 
@@ -32,7 +38,7 @@ public class LikeController {
      */
     @PostMapping("/like")
     @ResponseBody
-    public String like(int entityType, int entityId, int entityUserId){
+    public String like(int entityType, int entityId, int entityUserId, int postId){
         User user = hostHolder.getUser();
 
         likeService.like(user.getId(), entityType, entityId, entityUserId);
@@ -45,6 +51,19 @@ public class LikeController {
         Map<String, Object> map = new HashMap<>();
         map.put("likeCount", likeCount);
         map.put("likeStatus", likeStatus);
+
+        // 触发点赞事件
+        if (likeStatus == 1){
+            Event event = new Event()
+                    .setTopic(TOPIC_LIKE)
+                    .setEntityType(entityType)
+                    .setEntityId(entityId)
+                    .setEntityUserId(entityUserId)
+                    .setUserId(user.getId())
+                    .setData("postId", postId);
+            eventProducer.fireEvent(event);
+        }
+
         return CommunityUtil.getJSONString(0, "success", map);
     }
 }

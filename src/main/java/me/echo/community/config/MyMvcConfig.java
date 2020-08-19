@@ -2,6 +2,7 @@ package me.echo.community.config;
 
 import me.echo.community.controller.interceptor.LoginRequiredInterceptor;
 import me.echo.community.controller.interceptor.LoginTicketInterceptor;
+import me.echo.community.controller.interceptor.MessageInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,10 +17,13 @@ public class MyMvcConfig implements WebMvcConfigurer{
 
     private final LoginRequiredInterceptor loginRequiredInterceptor;
 
+    private final MessageInterceptor messageInterceptor;
+
     @Autowired
-    public MyMvcConfig(LoginTicketInterceptor loginTicketInterceptor, LoginRequiredInterceptor loginRequiredInterceptor) {
+    public MyMvcConfig(LoginTicketInterceptor loginTicketInterceptor, LoginRequiredInterceptor loginRequiredInterceptor, MessageInterceptor messageInterceptor) {
         this.loginTicketInterceptor = loginTicketInterceptor;
         this.loginRequiredInterceptor = loginRequiredInterceptor;
+        this.messageInterceptor = messageInterceptor;
     }
 
     @Override
@@ -28,6 +32,9 @@ public class MyMvcConfig implements WebMvcConfigurer{
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
 
         registry.addInterceptor(this.loginRequiredInterceptor)
+                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+
+        registry.addInterceptor(this.messageInterceptor)
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
     }
 

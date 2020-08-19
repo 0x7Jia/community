@@ -21,8 +21,8 @@ public class DiscussPost {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public Integer getUserId() {
+        return Integer.valueOf(userId);
     }
 
     public void setUserId(String userId) {
