@@ -1,6 +1,5 @@
 package me.echo.community.config;
 
-import me.echo.community.controller.interceptor.LoginRequiredInterceptor;
 import me.echo.community.controller.interceptor.LoginTicketInterceptor;
 import me.echo.community.controller.interceptor.MessageInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +14,14 @@ public class MyMvcConfig implements WebMvcConfigurer{
 
     private final LoginTicketInterceptor loginTicketInterceptor;
 
-    private final LoginRequiredInterceptor loginRequiredInterceptor;
+    // 废弃 使用springs security进行权限控制
+//    private final LoginRequiredInterceptor loginRequiredInterceptor;
 
     private final MessageInterceptor messageInterceptor;
 
     @Autowired
-    public MyMvcConfig(LoginTicketInterceptor loginTicketInterceptor, LoginRequiredInterceptor loginRequiredInterceptor, MessageInterceptor messageInterceptor) {
+    public MyMvcConfig(LoginTicketInterceptor loginTicketInterceptor, MessageInterceptor messageInterceptor) {
         this.loginTicketInterceptor = loginTicketInterceptor;
-        this.loginRequiredInterceptor = loginRequiredInterceptor;
         this.messageInterceptor = messageInterceptor;
     }
 
@@ -31,8 +30,8 @@ public class MyMvcConfig implements WebMvcConfigurer{
         registry.addInterceptor(this.loginTicketInterceptor)
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
 
-        registry.addInterceptor(this.loginRequiredInterceptor)
-                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+//        registry.addInterceptor(this.loginRequiredInterceptor)
+//                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
 
         registry.addInterceptor(this.messageInterceptor)
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
