@@ -1,5 +1,6 @@
 package me.echo.community.config;
 
+import me.echo.community.controller.interceptor.DataInterceptor;
 import me.echo.community.controller.interceptor.LoginTicketInterceptor;
 import me.echo.community.controller.interceptor.MessageInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,13 @@ public class MyMvcConfig implements WebMvcConfigurer{
 
     private final MessageInterceptor messageInterceptor;
 
+    private final DataInterceptor dataInterceptor;
+
     @Autowired
-    public MyMvcConfig(LoginTicketInterceptor loginTicketInterceptor, MessageInterceptor messageInterceptor) {
+    public MyMvcConfig(LoginTicketInterceptor loginTicketInterceptor, MessageInterceptor messageInterceptor, DataInterceptor dataInterceptor) {
         this.loginTicketInterceptor = loginTicketInterceptor;
         this.messageInterceptor = messageInterceptor;
+        this.dataInterceptor = dataInterceptor;
     }
 
     @Override
@@ -34,6 +38,9 @@ public class MyMvcConfig implements WebMvcConfigurer{
 //                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
 
         registry.addInterceptor(this.messageInterceptor)
+                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+
+        registry.addInterceptor(this.dataInterceptor)
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
     }
 

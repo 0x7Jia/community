@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/srping-security">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -28,6 +28,9 @@
                     <li class="nav-item ml-3 btn-group-vertical" th:if="${loginUser!=null}">
                         <a class="nav-link position-relative" th:href="@{/letter/list}">消息<span
                                 class="badge badge-danger" th:if="${totalUnreadCount!=0}" th:text="${totalUnreadCount}">0</span></a>
+                    </li>
+                    <li class="nav-item ml-3 btn-group-vertical" sec:authorize="hasAnyAuthority('admin')">
+                        <a class="nav-link" th:href="@{/data}">统计</a>
                     </li>
                     <li class="nav-item ml-3 btn-group-vertical" th:if="${loginUser==null}">
                         <a class="nav-link" th:href="@{/register}">注册</a>
