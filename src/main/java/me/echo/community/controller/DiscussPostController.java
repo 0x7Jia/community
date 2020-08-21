@@ -1,9 +1,7 @@
 package me.echo.community.controller;
 
-import me.echo.community.entity.Comment;
-import me.echo.community.entity.DiscussPost;
-import me.echo.community.entity.Page;
-import me.echo.community.entity.User;
+import me.echo.community.entity.*;
+import me.echo.community.event.EventProducer;
 import me.echo.community.service.CommentService;
 import me.echo.community.service.DiscussPostService;
 import me.echo.community.service.LikeService;
@@ -37,6 +35,9 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private LikeService likeService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     @PostMapping("/add")
     @ResponseBody
     public String addDiscussPost(String title, String content){
@@ -56,6 +57,15 @@ public class DiscussPostController implements CommunityConstant {
         post.setCreateTime(new Date());
 
         discussPostService.addDiscussPost(post);
+
+        // 触发发帖事件
+        Event event = new Event()
+                .setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId())
+                .setEntityType(ENTITY_TYPE_POST)
+                .setEntityId(post.getId());
+        eventProducer.fireEvent(event);
+
         return CommunityUtil.getJSONString(0, "发布成功!");
     }
 
