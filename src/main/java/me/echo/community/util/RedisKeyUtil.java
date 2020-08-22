@@ -11,6 +11,7 @@ public class RedisKeyUtil {
     private static final String PREFIX_USER = "user";
     private static final String PREFIX_UV = "uv";
     private static final String PREFIX_DAU = "dau";
+    private static final String PREFIX_POST = "post";
 
     // 某个实体的赞 like:entity:entityType:entityId -> set(userId)
     public static String getEntityLikeKey(int entityType, int entityId){
@@ -65,5 +66,10 @@ public class RedisKeyUtil {
     // 区间活跃用户
     public static String getDAUKey(String start, String end){
         return PREFIX_DAU+SPLIT+start+SPLIT+end;
+    }
+
+    // 帖子分数
+    public static String getPostScoreKey(){
+        return PREFIX_POST+SPLIT+"score";
     }
 }
