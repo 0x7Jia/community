@@ -39,7 +39,7 @@ public class MapperTest {
     @Test
     public void testSelectDiscussPosts(){
 //        List<DiscussPost> discussPosts = discussPostMapper.selectDiscussPosts(101, 2, 4);
-        List<DiscussPost> discussPosts = discussPostService.selectDiscussPosts(101, 2, 4);
+        List<DiscussPost> discussPosts = discussPostService.selectDiscussPosts(101, 2, 4, 0);
         for (DiscussPost discussPost : discussPosts) {
             System.out.println(discussPost);
         }
@@ -53,7 +53,7 @@ public class MapperTest {
 
     @Test
     public void testSelectDiscussPostWithUser() {
-        List<DiscussPostWithUser> discussPostWithUsers = discussPostMapper.selectDiscussPostWithUser(101, 1, 4);
+        List<DiscussPostWithUser> discussPostWithUsers = discussPostMapper.selectDiscussPostWithUser(101, 1, 4, 0);
         for (DiscussPostWithUser discussPostWithUser : discussPostWithUsers) {
             System.out.println(discussPostWithUser);
         }
